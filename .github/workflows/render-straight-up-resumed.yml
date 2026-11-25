@@ -1,0 +1,112 @@
+name: Render KOSMION resumed complete documentary
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/render-straight-up-resumed.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  scene:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 85
+    strategy:
+      fail-fast: false
+      max-parallel: 6
+      matrix:
+        scene: [orbit, turn, polar, ulysses, earthday, oort]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install rendering tools
+        run: |
+          cat > /tmp/kosmion-render.list <<'SOURCES'
+          deb https://archive.ubuntu.com/ubuntu noble main universe restricted multiverse
+          deb https://archive.ubuntu.com/ubuntu noble-updates main universe restricted multiverse
+          deb https://security.ubuntu.com/ubuntu noble-security main universe restricted multiverse
+          SOURCES
+          sudo timeout 180 apt-get -o Dir::Etc::sourcelist=/tmp/kosmion-render.list -o Dir::Etc::sourceparts=- -o Acquire::Retries=1 -o Acquire::http::Timeout=20 update -qq
+          sudo timeout 300 apt-get -o Dir::Etc::sourcelist=/tmp/kosmion-render.list -o Dir::Etc::sourceparts=- install -y -qq --no-install-recommends blender ffmpeg xvfb xauth libgl1-mesa-dri python3-numpy python3-pil
+      - name: Prepare NASA spacecraft geometry
+        if: matrix.scene == 'ulysses'
+        run: |
+          cd cosmos/008-straight-up
+          mkdir -p models model-tools
+          curl --fail --location --retry 3 --max-time 120 -o models/Ulysses.glb https://assets.science.nasa.gov/content/dam/science/cds/3d/resources/model/ulysses/Ulysses.glb
+          npm install --prefix model-tools --no-audit --no-fund @gltf-transform/core @gltf-transform/extensions draco3dgltf
+          cd model-tools
+          node decompress.mjs
+      - name: Render original spatial illustration
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          XDG_CACHE_HOME: /tmp/kosmion-render-cache
+        run: |
+          cd cosmos/008-straight-up
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          for name in ['make_orbits.py','make_regions.py']:
+              p=Path(name);s=p.read_text().replace('s.eevee.taa_render_samples=24','s.eevee.taa_render_samples=12').replace('s.frame_start=1;s.frame_end=1000','s.frame_start=1;s.frame_end=1000;s.frame_step=2');p.write_text(s)
+          PYCODE
+          script=make_regions.py
+          if [ "${{ matrix.scene }}" != "earthday" ] && [ "${{ matrix.scene }}" != "oort" ]; then script=make_orbits.py; fi
+          xvfb-run -a blender -b --python-exit-code 1 -t 2 -P "$script" -- ${{ matrix.scene }} > original-render.log 2>&1
+          ffmpeg -y -v warning -framerate 12.5 -pattern_type glob -i "original3d/${{ matrix.scene }}/frame-*.jpg" -vf "minterpolate=fps=25:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1,tpad=stop_mode=clone:stop_duration=1" -frames:v 1000 -an -c:v libx264 -preset veryfast -crf 18 -threads 2 -pix_fmt yuv420p ${{ matrix.scene }}.mp4
+          python3 review_original.py ${{ matrix.scene }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: straight-up-resumed-region-${{ matrix.scene }}
+          path: |
+            cosmos/008-straight-up/${{ matrix.scene }}.mp4
+            cosmos/008-straight-up/review-original-*.jpg
+            cosmos/008-straight-up/original-render.log
+          retention-days: 7
+
+  picture:
+    needs: scene
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        part: [0, 1, 2, 3]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install rendering tools from bounded Ubuntu sources
+        run: |
+          cat > /tmp/kosmion-render.list <<'SOURCES'
+          deb https://archive.ubuntu.com/ubuntu noble main universe restricted multiverse
+          deb https://archive.ubuntu.com/ubuntu noble-updates main universe restricted multiverse
+          deb https://security.ubuntu.com/ubuntu noble-security main universe restricted multiverse
+          SOURCES
+          sudo timeout 180 apt-get -o Dir::Etc::sourcelist=/tmp/kosmion-render.list -o Dir::Etc::sourceparts=- -o Acquire::Retries=1 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20 update -qq
+          sudo timeout 300 apt-get -o Dir::Etc::sourcelist=/tmp/kosmion-render.list -o Dir::Etc::sourceparts=- -o Acquire::Retries=1 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20 install -y -qq --no-install-recommends ffmpeg fonts-lato python3-pil
+      - name: Fetch original sources and render picture only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd cosmos/008-straight-up
+          mkdir -p fonts
+          cp /usr/share/fonts/truetype/lato/Lato-Regular.ttf fonts/
+          cp /usr/share/fonts/truetype/lato/Lato-Bold.ttf fonts/
+          python3 - <<'PYCODE'
+          import json,os
+          p=json.load(open('plan.json'))
+          for a in p['assets']:
+              if a.get('original_run_id'):
+                  a['original_run_id']=int(os.environ['GITHUB_RUN_ID']);a['artifact_name']='straight-up-resumed-region-'+a['key']
+          json.dump(p,open('plan.json','w'),indent=2)
+          PYCODE
+          python3 -u render.py --part ${{ matrix.part }} --prepare --jobs 2 > picture-render.log 2>&1
+          python3 -u review_picture.py ${{ matrix.part }} >> picture-render.log 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: straight-up-resumed-picture-${{ matrix.part }}
+          path: |
+            cosmos/008-straight-up/picture_*.mp4
+            cosmos/008-straight-up/picture_*.verification.json
+            cosmos/008-straight-up/review/group-*/page-*.jpg
+            cosmos/008-straight-up/picture-render.log
+          retention-days: 7
