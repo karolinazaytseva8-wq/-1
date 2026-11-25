@@ -75,7 +75,7 @@ def render(plan,shots,assets,output,jobs):
    if a.get('crop'):
     vf.append(f"crop={a['crop']}")
    elif a.get('contain') or a['width']/a['height']<1.5:
-    vf+=['scale=1800:1000:force_original_aspect_ratio=decrease:flags=lanczos','pad=1920:1080:(ow-iw)/2:(oh-ih)/2:color=black']
+    vf+=['format=rgb24','scale=1800:1000:force_original_aspect_ratio=decrease:flags=lanczos','pad=1920:1080:(ow-iw)/2:(oh-ih)/2:color=black']
    else:vf+=([f"v360=input=equirect:output=flat:h_fov=100:v_fov=65:yaw={a.get('yaw',0)}:w=1920:h=1080"] if a.get('projection')=='equirect' else [])
    vf+=['scale=1920:1080:force_original_aspect_ratio=increase:flags=lanczos','crop=1920:1080']
    vf+=[f"zoompan=z='min({1.055+s.get('photo_variant',0)*.16},{1+s.get('photo_variant',0)*.16}+on*0.00012)':x='iw/2-iw/zoom/2':y='ih/2-ih/zoom/2':d={rawframes}:s=1920x1080:fps={fps}"]

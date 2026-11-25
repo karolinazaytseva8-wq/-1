@@ -1,0 +1,53 @@
+name: Publish one complete KOSMION Solar System documentary
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/publish-straight-up.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Retrieve the verified complete final movie
+        env:
+          COMPLETED_MOVIE: '{"filename":"Sonnensystem_KOSMION_1080p.mp4","bytes":801762595,"sha256":"59a2c21f83d10ede1a49441ec8d1922c2d371fe8316f6ef6af5c0dd931e07baf","duration":1175.64,"parts":[{"index":0,"url":"https://litter.catbox.moe/hu1mf9.bin","bytes":314572800,"sha256":"142798b6dd8648725c4f04f4ac75bd1a8169f171fd90dc384f3efb36f279eb73"},{"index":1,"url":"https://litter.catbox.moe/93m6w3.bin","bytes":314572800,"sha256":"8383fe275b48bcdce2b02cbaaf959d535f842ecdebff7d51dcab000555a1108e"},{"index":2,"url":"https://litter.catbox.moe/tw7tpc.bin","bytes":172616995,"sha256":"8dd7eb0225f9c8138e7c5a224731efe8b2d134516c364f62d54afbaf12d11e48"}]}'
+        run: |
+          python3 - <<'PYCODE'
+          import urllib.request,http.cookiejar,pathlib,hashlib,os,json
+          cfg=json.loads(os.environ['COMPLETED_MOVIE']);dest=pathlib.Path(cfg['filename']);jar=http.cookiejar.CookieJar();op=urllib.request.build_opener(urllib.request.HTTPCookieProcessor(jar));h=hashlib.sha256();count=0
+          with open(dest,'wb') as output:
+              for piece in cfg.get('parts',[cfg]):
+                  for attempt in range(3):
+                      with op.open(urllib.request.Request(piece['url'],headers={'Range':'bytes=0-31'}),timeout=90) as response:
+                          header=response.read(32);ctype=response.headers.get('Content-Type','')
+                      if 'text/html' not in ctype:break
+                  assert 'text/html' not in ctype
+                  piece_hash=hashlib.sha256();piece_count=0
+                  with op.open(piece['url'],timeout=600) as response:
+                      while data:=response.read(1024*1024):output.write(data);h.update(data);count+=len(data);piece_hash.update(data);piece_count+=len(data)
+                  assert piece_count==piece['bytes'];assert piece_hash.hexdigest()==piece['sha256']
+          assert dest.open('rb').read(8)[4:8]==b'ftyp'
+          assert count==cfg['bytes']==dest.stat().st_size;assert h.hexdigest()==cfg['sha256']
+          print('One complete final MP4 verified:',count,h.hexdigest())
+          PYCODE
+      - name: Publish one finished MP4
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          cat > release-notes.md <<'NOTES'
+          Warum wir das Sonnensystem durchqueren können, aber nicht gerade nach oben fliegen können
+
+          Vollständige deutsche Dokumentation: 19:36, 1920 × 1080, 25 Bilder pro Sekunde, H.264 und AAC.
+
+          Ein vollständiger MP4-Film mit der gelieferten Erzählstimme, wissenschaftlichen dreidimensionalen Visualisierungen, ausgewählten echten Archivaufnahmen und Beobachtungen sowie sparsamer deutscher Typografie. Kleine Bildnachweise stehen direkt in den ausgewählten Archivaufnahmen.
+
+          Quellen, Urheber und Lizenzen: [SOURCES.md](https://github.com/karolinazaytseva8-wq/-1/blob/main/cosmos/008-straight-up/SOURCES.md).
+          Qualitätsprüfung: [QUALITY_REPORT.md](https://github.com/karolinazaytseva8-wq/-1/blob/main/cosmos/008-straight-up/QUALITY_REPORT.md).
+          NOTES
+          gh release create cosmos-008-straight-up --target "${{ github.sha }}" --title "KOSMION · Sonnensystem · Vollständiger Film · 1080p" --notes-file release-notes.md
+          gh release upload cosmos-008-straight-up Sonnensystem_KOSMION_1080p.mp4 --clobber

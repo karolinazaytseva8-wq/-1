@@ -70,3 +70,5 @@ Check pilots on the same Blender version and renderer used for the long render. 
 Do not assume the file extension of a NASA asset. Read its collection manifest: originals can be PNG even when preview files are JPEG. Read the actual publisher credit register, including simulation contributors, rather than attributing every hosted file to its web host.
 
 A visual review requires actual extracted images for every expected sample. Treat missing frames as a review failure; never approve an empty placeholder on a contact sheet. Do not seek into a single still-image input using video-style input seeking when extracting its only frame. Recheck label timing against the source camera: a heliosphere label must identify the heliosphere itself, not an earlier Galactic establishing view from the same long source file.
+
+For black padding around JPEG archival imagery, convert to RGB before adding black borders. JPEG full-range luma combined with a limited-range pad can produce a visible gray rectangle. Inspect the completed encoded photograph, not only the source still.
