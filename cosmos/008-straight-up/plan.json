@@ -1179,6 +1179,31 @@
       ],
       "license": "NASA media guidelines",
       "license_url": "https://www.nasa.gov/nasa-brand-center/images-and-media/"
+    },
+    {
+      "key": "PIA11141",
+      "url": "https://images-assets.nasa.gov/image/PIA11141/PIA11141~orig.jpg",
+      "page": "https://images.nasa.gov/details/PIA11141",
+      "path": "assets/PIA11141.jpg",
+      "width": 4613,
+      "height": 2233,
+      "media": "image",
+      "kind": "archive_photo",
+      "duration": 60,
+      "allowed": [
+        [
+          0,
+          60
+        ]
+      ],
+      "title": "Saturn \u2026 Four Years On",
+      "credit": "NASA/JPL-Caltech",
+      "screen_credit": "NASA/JPL-Caltech",
+      "license": "NASA media usage guidelines; credited scientific and historical imagery",
+      "license_url": "https://www.nasa.gov/nasa-brand-center/images-and-media/",
+      "rate": 1,
+      "max_uses": 1,
+      "contain": true
     }
   ],
   "shots": [
@@ -1201,7 +1226,7 @@
     },
     {
       "id": 1,
-      "asset": "PIA21047",
+      "asset": "PIA11141",
       "in": 0,
       "frames": 80,
       "start_frame": 80,
@@ -1214,7 +1239,7 @@
       "labels": [],
       "purpose": "Saturn, Cassini observation",
       "photo_variant": 0.0,
-      "render_key": "resumed-corrected-1-ab7e444d"
+      "render_key": "saturn-full-001"
     },
     {
       "id": 2,

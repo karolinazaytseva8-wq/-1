@@ -74,8 +74,8 @@ def render(plan,shots,assets,output,jobs):
    cmd+=['-loop','1','-i',str(src)]
    if a.get('crop'):
     vf.append(f"crop={a['crop']}")
-   elif a['width']/a['height']<1.5:
-    vf+=['scale=1800:1000:force_original_aspect_ratio=decrease:flags=lanczos','pad=1920:1080:(ow-iw)/2:(oh-ih)/2:color=0x030710']
+   elif a.get('contain') or a['width']/a['height']<1.5:
+    vf+=['scale=1800:1000:force_original_aspect_ratio=decrease:flags=lanczos','pad=1920:1080:(ow-iw)/2:(oh-ih)/2:color=black']
    else:vf+=([f"v360=input=equirect:output=flat:h_fov=100:v_fov=65:yaw={a.get('yaw',0)}:w=1920:h=1080"] if a.get('projection')=='equirect' else [])
    vf+=['scale=1920:1080:force_original_aspect_ratio=increase:flags=lanczos','crop=1920:1080']
    vf+=[f"zoompan=z='min({1.055+s.get('photo_variant',0)*.16},{1+s.get('photo_variant',0)*.16}+on*0.00012)':x='iw/2-iw/zoom/2':y='ih/2-ih/zoom/2':d={rawframes}:s=1920x1080:fps={fps}"]
@@ -116,5 +116,7 @@ def render(plan,shots,assets,output,jobs):
  command(['ffmpeg','-v','error','-threads','2','-i',str(output),'-f','null','-'],logs/(output.stem+'-decode.log'));assert not (logs/(output.stem+'-decode.log')).read_text().strip();output.with_suffix('.verification.json').write_text(json.dumps(p,indent=2));print('VERIFIED',output.name,p['format']['duration'],output.stat().st_size,flush=True)
 
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--part',type=int,required=True);ap.add_argument('--prepare',action='store_true');ap.add_argument('--jobs',type=int,default=2);a=ap.parse_args();p=json.load(open(R/'plan.json'));spec=p['parts'][a.part];shots=p['shots'][spec['first']:spec['last']];assets=prepare(p,shots) if a.prepare else {x['key']:x for x in p['assets']};output=R/f'picture_{a.part:02}.mp4';render(p,shots,assets,output,a.jobs)
+ ap=argparse.ArgumentParser();ap.add_argument('--part',type=int,required=True);ap.add_argument('--prepare',action='store_true');ap.add_argument('--jobs',type=int,default=2);ap.add_argument('--prepare-only',action='store_true');a=ap.parse_args();p=json.load(open(R/'plan.json'));spec=p['parts'][a.part];shots=p['shots'][spec['first']:spec['last']];assets=prepare(p,shots) if a.prepare else {x['key']:x for x in p['assets']}
+ if a.prepare_only:return
+ output=R/f'picture_{a.part:02}.mp4';render(p,shots,assets,output,a.jobs)
 if __name__=='__main__':main()

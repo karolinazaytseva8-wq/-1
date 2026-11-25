@@ -20,7 +20,7 @@ Public-domain NASA material and credited third-party material are distinguished 
 **Native media:** https://svs.gsfc.nasa.gov/vis/a020000/a020400/a020406/iMAP_Shot_1-2_30fps_1080_h264_wStars_v02.mp4
 **Full publisher credit register:** Credits Please give credit for this item to: NASA's Goddard Space Flight Center Conceptual Image Lab Animators Adriana Manrique Gutierrez (eMITS) Jonathan North (eMITS) Producer Joy Ng (eMITS)
 **Rights:** NASA media usage guidelines; original sound excluded. https://www.nasa.gov/nasa-brand-center/images-and-media/
-**Native file:** 1920 × 1080; selected source seconds: 35.00–43.84, 9.90–19.08, 19.20–28.38.
+**Native file:** 1920 × 1080; selected source seconds: 35.00–44.18, 9.90–19.08, 19.20–28.38.
 
 ## NASA SVS | The Heliosphere Within The Milky Way Galaxy
 
@@ -109,7 +109,7 @@ Public-domain NASA material and credited third-party material are distinguished 
 **Source:** https://svs.gsfc.nasa.gov/30623/
 **Native media:** https://svs.gsfc.nasa.gov/vis/a030000/a030600/a030623/iss_red_camera_2015_1080p.mp4
 **Rights:** NASA media guidelines / public domain where applicable. https://www.nasa.gov/nasa-brand-center/images-and-media/
-**Native file:** 1920 × 1080; selected source seconds: 12.00–17.40, 17.52–23.52, 64.00–74.40, 28.00–31.60, 53.12–57.32, 43.00–53.00, 101.00–113.00, 113.12–122.12.
+**Native file:** 1920 × 1080; selected source seconds: 12.00–17.40, 17.52–23.52, 64.00–74.80, 28.00–32.00, 53.12–57.72, 43.00–53.00, 101.00–113.00, 113.12–122.12.
 
 ## Solar Dynamics Observatory: solar structure and arching eruption
 
@@ -191,14 +191,6 @@ A reconstruction of the Orion Nebula illustrates star-forming gas in context; it
 **Native media:** https://images-assets.nasa.gov/image/PIA18173/PIA18173~orig.jpg
 **Rights:** NASA media usage guidelines; credited scientific and historical imagery. https://www.nasa.gov/nasa-brand-center/images-and-media/
 **Image:** 1191 × 849; documentary camera move.
-
-## Staring at Saturn
-
-**Credit:** NASA/JPL-Caltech/Space Science Institute.
-**Source:** https://images.nasa.gov/details/PIA21047
-**Native media:** https://images-assets.nasa.gov/image/PIA21047/PIA21047~orig.jpg
-**Rights:** NASA media usage guidelines; credited scientific and historical imagery. https://www.nasa.gov/nasa-brand-center/images-and-media/
-**Image:** 1441 × 1173; documentary camera move.
 
 ## Pluto in True Color
 
@@ -364,6 +356,7 @@ A published simulation of Supernova 1987A illustrates the blast-wave mechanism; 
 Original processing uses authenticated short-lived GitHub artifacts; no public source bundle is distributed.
 **Rights:** Original KOSMION spatial illustration; sizes and time compressed. 
 **Native file:** 1920 × 1080; selected source seconds: 0.60–9.24, 9.36–18.00, 18.12–23.72, 23.84–26.72.
+The resumed spatial render samples original camera/object animation at twelve and a half frames per second and uses motion-compensated interpolation for a twenty-five-frame-per-second Full HD output. Geometry and motion remain original three-dimensional illustrations.
 
 ## Original spatial illustration: planes
 
@@ -380,6 +373,7 @@ Original processing uses authenticated short-lived GitHub artifacts; no public s
 Original processing uses authenticated short-lived GitHub artifacts; no public source bundle is distributed.
 **Rights:** Original KOSMION spatial illustration; sizes and time compressed. 
 **Native file:** 1920 × 1080; selected source seconds: 5.04–13.68, 13.80–22.44, 22.56–29.28.
+The resumed spatial render samples original camera/object animation at twelve and a half frames per second and uses motion-compensated interpolation for a twenty-five-frame-per-second Full HD output. Geometry and motion remain original three-dimensional illustrations.
 
 ## Original spatial illustration: polar
 
@@ -388,6 +382,7 @@ Original processing uses authenticated short-lived GitHub artifacts; no public s
 Original processing uses authenticated short-lived GitHub artifacts; no public source bundle is distributed.
 **Rights:** Original KOSMION spatial illustration; sizes and time compressed. 
 **Native file:** 1920 × 1080; selected source seconds: 0.60–4.92, 5.04–10.64, 10.76–19.40, 19.52–24.32, 24.44–30.84.
+The resumed spatial render samples original camera/object animation at twelve and a half frames per second and uses motion-compensated interpolation for a twenty-five-frame-per-second Full HD output. Geometry and motion remain original three-dimensional illustrations.
 
 ## Original spatial illustration: ulysses
 
@@ -396,6 +391,7 @@ Original processing uses authenticated short-lived GitHub artifacts; no public s
 Original processing uses authenticated short-lived GitHub artifacts; no public source bundle is distributed.
 **Rights:** Original KOSMION visualization; NASA geometry and Earth texture credited in sources. 
 **Native file:** 1920 × 1080; selected source seconds: 0.60–4.12, 4.24–8.56, 8.68–13.80, 13.92–17.12, 17.24–24.44, 24.56–34.16.
+The resumed spatial render samples original camera/object animation at twelve and a half frames per second and uses motion-compensated interpolation for a twenty-five-frame-per-second Full HD output. Geometry and motion remain original three-dimensional illustrations.
 
 ## Original spatial illustration: earthday
 
@@ -403,7 +399,8 @@ Original processing uses authenticated short-lived GitHub artifacts; no public s
 **Source:** Original KOSMION Blender scene in this directory
 Original processing uses authenticated short-lived GitHub artifacts; no public source bundle is distributed.
 **Rights:** Original KOSMION visualization; NASA geometry and Earth texture credited in sources. 
-**Native file:** 1920 × 1080; selected source seconds: 0.60–5.72, 33.10–38.70, 5.84–15.44, 15.56–24.20, 24.32–32.96.
+**Native file:** 1920 × 1080; selected source seconds: 0.60–5.72, 33.10–39.02, 5.84–15.44, 15.56–24.20, 24.32–32.96.
+The resumed spatial render samples original camera/object animation at twelve and a half frames per second and uses motion-compensated interpolation for a twenty-five-frame-per-second Full HD output. Geometry and motion remain original three-dimensional illustrations.
 
 ## Original spatial illustration: oort
 
@@ -412,6 +409,7 @@ Original processing uses authenticated short-lived GitHub artifacts; no public s
 Original processing uses authenticated short-lived GitHub artifacts; no public source bundle is distributed.
 **Rights:** Original KOSMION visualization; NASA geometry and Earth texture credited in sources. 
 **Native file:** 1920 × 1080; selected source seconds: 0.60–9.24, 9.36–14.96, 15.08–25.48, 25.60–31.68.
+The resumed spatial render samples original camera/object animation at twelve and a half frames per second and uses motion-compensated interpolation for a twenty-five-frame-per-second Full HD output. Geometry and motion remain original three-dimensional illustrations.
 
 ## Solar System Animation
 
@@ -420,4 +418,12 @@ Original processing uses authenticated short-lived GitHub artifacts; no public s
 **Native media:** https://svs.gsfc.nasa.gov/vis/a020000/a020200/a020249/SolarSystem_H264_4K.mov
 **Full publisher credit register:** Credits Please give credit for this item to: NASA's Goddard Space Flight Center Conceptual Image Lab Animator Adriana Manrique Gutierrez (USRA) Producer Scott Wiessinger (USRA)
 **Rights:** NASA media guidelines. https://www.nasa.gov/nasa-brand-center/images-and-media/
-**Native file:** 3840 × 2160; selected source seconds: 0.60–4.60, 5.10–9.10.
+**Native file:** 3840 × 2160; selected source seconds: 0.60–4.92, 5.10–9.42.
+
+## Saturn … Four Years On
+
+**Credit:** NASA/JPL/Space Science Institute.
+**Source:** https://images.nasa.gov/details/PIA11141
+**Native media:** https://images-assets.nasa.gov/image/PIA11141/PIA11141~orig.jpg
+**Rights:** NASA media usage guidelines; credited scientific and historical imagery. https://www.nasa.gov/nasa-brand-center/images-and-media/
+**Image:** 4613 × 2233; documentary camera move.

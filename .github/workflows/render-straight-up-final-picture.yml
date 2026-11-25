@@ -1,0 +1,71 @@
+name: Render KOSMION final picture as sources arrive
+# Preserve original asset directory structure during authenticated retrieval.
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/render-straight-up-final-picture.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: write
+jobs:
+  scene:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      max-parallel: 8
+      matrix:
+        part: [0, 1, 2, 3]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install rendering tools from bounded Ubuntu sources
+        run: |
+          cat > /tmp/kosmion-render.list <<'SOURCES'
+          deb https://archive.ubuntu.com/ubuntu noble main universe restricted multiverse
+          deb https://archive.ubuntu.com/ubuntu noble-updates main universe restricted multiverse
+          deb https://security.ubuntu.com/ubuntu noble-security main universe restricted multiverse
+          SOURCES
+          sudo timeout 180 apt-get -o Dir::Etc::sourcelist=/tmp/kosmion-render.list -o Dir::Etc::sourceparts=- -o Acquire::Retries=1 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20 update -qq
+          sudo timeout 300 apt-get -o Dir::Etc::sourcelist=/tmp/kosmion-render.list -o Dir::Etc::sourceparts=- -o Acquire::Retries=1 -o Acquire::http::Timeout=20 -o Acquire::https::Timeout=20 install -y -qq --no-install-recommends ffmpeg fonts-lato python3-pil
+      - name: Fetch original sources and render picture only
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cd cosmos/008-straight-up
+          mkdir -p fonts
+          cp /usr/share/fonts/truetype/lato/Lato-Regular.ttf fonts/
+          cp /usr/share/fonts/truetype/lato/Lato-Bold.ttf fonts/
+          python3 - <<'PYCODE'
+          import json
+          p=json.load(open('plan.json'))
+          for a in p['assets']:
+              if a.get('original_run_id'):a['original_run_id']=45644922515
+          json.dump(p,open('plan.json','w'),indent=2)
+          PYCODE
+          python3 -u render.py --part ${{ matrix.part }} --prepare --prepare-only > picture-render.log 2>&1
+          if [ "${{ matrix.part }}" = "0" ]; then
+            python3 - <<'PYCODE'
+          import urllib.request,json,os
+          base='https://api.github.com/repos/karolinazaytseva8-wq/-1/actions/runs/45644922515'
+          headers={'Authorization':'Bearer '+os.environ['GH_TOKEN'],'Accept':'application/vnd.github+json'}
+          with urllib.request.urlopen(urllib.request.Request(base+'/jobs',headers=headers)) as f:jobs=json.load(f)['jobs']
+          scenes=[j for j in jobs if j['name'].startswith('scene (')]
+          if len(scenes)==6 and all(j['conclusion']=='success' for j in scenes):
+              with urllib.request.urlopen(urllib.request.Request(base,headers=headers)) as f:state=json.load(f)['status']
+              if state!='completed':
+                  with urllib.request.urlopen(urllib.request.Request(base+'/cancel',headers=headers,method='POST')) as f:print('Superseded dependent picture build stopped',f.status)
+          PYCODE
+          fi
+          python3 -u render.py --part ${{ matrix.part }} --jobs 2 >> picture-render.log 2>&1
+          python3 -u review_picture.py ${{ matrix.part }} >> picture-render.log 2>&1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: straight-up-final-picture-${{ matrix.part }}
+          path: |
+            cosmos/008-straight-up/picture_*.mp4
+            cosmos/008-straight-up/picture_*.verification.json
+            cosmos/008-straight-up/review/group-*/page-*.jpg
+            cosmos/008-straight-up/picture-render.log
+          retention-days: 7
